@@ -339,14 +339,17 @@ class Phaser:
             if is_baseband:
                 continue
 
-            if channel.trf_read(0) & 0x7f != 0x68:
-                raise ValueError("TRF identification failed")
+            #if channel.trf_read(0) & 0x7f != 0x68:
+            #    raise ValueError("TRF identification failed")
             delay(.1*ms)
 
             delay(.2*ms)
-            for data in channel.trf_mmap:
-                channel.trf_write(data)
-            channel.cal_trf_vco()
+
+            #for data in channel.trf_mmap:
+            #    channel.trf_write(data)
+            #channel.cal_trf_vco()
+
+
 
             delay(2*ms)  # lock
             if not (self.get_sta() & (PHASER_STA_TRF0_LD << ch)):
@@ -355,7 +358,7 @@ class Phaser:
             if channel.trf_read(0) & 0x1000:
                 raise ValueError("TRF R_SAT_ERR")
             delay(.1*ms)
-            channel.en_trf_out()
+            #channel.en_trf_out()
 
         # enable dac tx
         self.set_cfg(clk_sel=self.clk_sel)
@@ -810,7 +813,7 @@ class PhaserChannel:
         :param select: Select the data to send to the DAC (0: DUC data, 1: test
             data, other values: reserved)
         """
-        self.phaser.write8(PHASER_ADDR_DUC0_CFG + (self.index << 4),
+        self.phaser.write8( PHASER_ADDR_DUC0_CFG + (self.index << 4),
                            ((clr & 1) << 0) | ((clr_once & 1) << 1) |
                            ((select & 3) << 2))
 

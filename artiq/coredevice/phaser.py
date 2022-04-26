@@ -352,33 +352,33 @@ class Phaser:
 
 
 
-            trf_mmap =  [0x60100209,
-                                 0x0000000B,
-                                 0x4A00000C,
-                                 0x0D03A28D,
-                                 0x9A90100E,#Ioff=qoff=128
-                                 #0x9A9FFFEE,#Ioff=255 Qoff=255
-                                 #0x9A88080E,#Ioff=qoff=64
-                                 0xD041100F,#DCOffser=150uA
-                                 #0x9041100F, #DCOffser=50uA
-                                 0x088A0200A
-                                 ]
-
-
-            for data in trf_mmap: #channel.trf_mmap
-                channel.trf_write(data)
+            # trf_mmap =  [0x60100209,
+            #                      0x0000000B,
+            #                      0x4A00000C,
+            #                      0x0D03A28D,
+            #                      0x9A90100E,#Ioff=qoff=128
+            #                      #0x9A9FFFEE,#Ioff=255 Qoff=255
+            #                      #0x9A88080E,#Ioff=qoff=64
+            #                      0xD041100F,#DCOffser=150uA
+            #                      #0x9041100F, #DCOffser=50uA
+            #                      0x088A0200A
+            #                      ]
             #
-            channel.cal_trf_vco()
+            #
+            # for data in trf_mmap: #channel.trf_mmap
+            #     channel.trf_write(data)
+            # #
+            # channel.cal_trf_vco()
 
 
-
-            delay(2*ms)  # lock
-            if not (self.get_sta() & (PHASER_STA_TRF0_LD << ch)):
-                raise ValueError("TRF lock failure")
-            delay(.1*ms)
-            if channel.trf_read(0) & 0x1000:
-                raise ValueError("TRF R_SAT_ERR")
-            delay(.1*ms)
+            
+            # delay(2*ms)  # lock
+            # if not (self.get_sta() & (PHASER_STA_TRF0_LD << ch)):
+            #     raise ValueError("TRF lock failure")
+            # delay(.1*ms)
+            # if channel.trf_read(0) & 0x1000:
+            #     raise ValueError("TRF R_SAT_ERR")
+            # delay(.1*ms)
             #channel.en_trf_out()
 
         # enable dac tx

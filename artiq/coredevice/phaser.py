@@ -183,7 +183,6 @@ class Phaser:
         if board_id != PHASER_BOARD_ID:
             raise ValueError("invalid board id")
         delay(.1*ms)  # slack
-
         hw_rev = self.read8(PHASER_ADDR_HW_REV)
         delay(.1*ms)  # slack
         is_baseband = hw_rev & PHASER_HW_REV_VARIANT
@@ -222,6 +221,7 @@ class Phaser:
 
         # 4 wire SPI, sif4_enable
         self.dac_write(0x02, 0x0080)
+        delay(.1*ms)
         if self.dac_read(0x7f) != 0x5409:
             raise ValueError("DAC version readback invalid")
         delay(.1*ms)
@@ -235,6 +235,7 @@ class Phaser:
             raise ValueError("DAC temperature out of bounds")
 
         for data in self.dac_mmap:
+            delay(.1*ms)
             self.dac_write(data >> 16, data)
             delay(40*us)
         self.dac_sync()
@@ -255,8 +256,9 @@ class Phaser:
         # either side) and no need to tune at runtime.
         # Parity provides another level of safety.
         for i in range(len(patterns)):
-            delay(.5*ms)
+            delay(2*ms)
             errors = self.dac_iotest(patterns[i])
+            delay(2*ms)
             if errors:
                 pass
                 #raise ValueError("DAC iotest failure")
@@ -371,7 +373,7 @@ class Phaser:
             # channel.cal_trf_vco()
 
 
-            
+
             # delay(2*ms)  # lock
             # if not (self.get_sta() & (PHASER_STA_TRF0_LD << ch)):
             #     raise ValueError("TRF lock failure")
@@ -642,6 +644,7 @@ class Phaser:
         config1f = self.dac_read(0x1f)
         delay(.1*ms)
         self.dac_write(0x1f, config1f & ~int32(1 << 1))
+        delay(.1*ms)
         self.dac_write(0x1f, config1f | (1 << 1))
 
     @kernel
@@ -677,7 +680,9 @@ class Phaser:
     @kernel
     def clear_dac_alarms(self):
         """Clear DAC alarm flags."""
+        delay(.1*ms)
         self.dac_write(0x05, 0x0000)
+        delay(.1*ms)
 
     @kernel
     def dac_iotest(self, pattern) -> TInt32:
@@ -706,6 +711,7 @@ class Phaser:
         cfg = self.dac_read(0x01)
         delay(.1*ms)
         self.dac_write(0x01, cfg | 0x8000)  # iotest_ena
+        delay(.1*ms)
         self.dac_write(0x04, 0x0000)  # clear iotest_result
         delay(.2*ms)  # let it rip
         # no need to go through the alarm register,
@@ -719,6 +725,7 @@ class Phaser:
         else:
             errors = 0
         self.dac_write(0x01, cfg)  # clear config
+        delay(.1*ms)
         self.dac_write(0x04, 0x0000)  # clear iotest_result
         return errors
 
